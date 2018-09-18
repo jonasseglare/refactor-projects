@@ -1,7 +1,17 @@
 (ns refactor-projects.core
   (:import [java.io File])
   (:require [clojure.java.io :as io]
-            [clojure.string :as cljstr]))
+            [clojure.string :as cljstr]
+            [clojure.edn :as edn]
+            [clojure.spec.alpha :as spec]))
+
+(spec/def ::clj-file (spec/alt :src-file (spec/cat :ns (partial = 'ns)
+                                                   :namespace symbol?
+                                                   :rest (spec/* any?))
+                               :leiningen-project (spec/cat :dp (partial = 'defproject)
+                                                            :name symbol?
+                                                            :rest (spec/* any?))
+                               :unknown (spec/* any?)))
 
 (defn parts-to-filename-suffix [parts]
   (str (cljstr/join
@@ -69,12 +79,28 @@
       "(defproject" parse-project-tokens
       (constantly {}))  tokens))
 
+(defn parse-edn [edn-data]
+  (let [parsed (spec/conform ::clj-file edn-data)]
+    (if (= parsed ::spec/invalid)
+      {}
+      (merge {:type (first parsed)}
+             (select-keys
+              (second parsed) [(case (first parsed)
+                                  :src-file :namespace
+                                  :leiningen-project :name)])))))
+
 (defn analyze-clojure-file [file]
   (let [data (slurp file)
-        tokens (tokenize data)]
+        edn-data (read-string data)]
     (merge {:data data
+            :edn-data edn-data
             :file file}
-           (parse-tokens tokens))))
+           (parse-edn edn-data))))
+
+(defn append-test [s]
+  (str s "-test"))
+
+
 
 (defn rename-settings-with-test [rename-settings]
   (-> rename-settings
@@ -121,9 +147,6 @@
 (defn rename-namespace-for-file [file rename-settings]
   (and (= (:type file) :src-file)
        (perform-renaming file rename-settings)))
-
-(defn append-test [s]
-  (str s "-test"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;
