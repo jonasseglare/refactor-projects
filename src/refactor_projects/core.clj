@@ -84,10 +84,13 @@
     (if (= parsed ::spec/invalid)
       {}
       (merge {:type (first parsed)}
-             (select-keys
-              (second parsed) [(case (first parsed)
-                                  :src-file :namespace
-                                  :leiningen-project :name)])))))
+             (into {}
+                   (map (fn [[k v]]
+                          [k (str v)])
+                        (select-keys
+                         (second parsed) [(case (first parsed)
+                                            :src-file :namespace
+                                            :leiningen-project :name)])))))))
 
 (defn analyze-clojure-file [file]
   (let [data (slurp file)
