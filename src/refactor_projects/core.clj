@@ -262,6 +262,14 @@
               :mode :preview})
 
 #_(refactor {:paths ["/home/jonas/prog/clojure"]
+           :ops [[:rename "bluebell.utils.wip.specs" "bluebell.utils.wip.specs"]]
+             :mode :execute})
+
+#_(refactor {:paths ["/home/jonas/prog/clojure/geex"]
+           :ops [[:rename "geex.jcore" "geex.core"]]
+           :mode :preview})
+
+#_(refactor {:paths ["/home/jonas/prog/clojure"]
            :ops [[:rename "bluebell.utils.dsl" "bluebell.utils.dsl"]
                  [:rename "bluebell.utils.render-text" "bluebell.utils.render-text"]
                  [:rename "bluebell.utils.ebmd" "bluebell.utils.ebmd"]]
@@ -269,4 +277,19 @@
 
 #_(refactor {:paths ["/home/jonas/prog/clojure/test-project"]
            :ops [[:rename "test-project" "kattskit.wip"]]
-           :mode :preview})
+             :mode :preview})
+
+#_(refactor {:paths ["/home/jonas/prog/clojure/geex"
+                   "/home/jonas/prog/clojure/geex-benchmarks/clojure-benchmarks"]
+             :ops [[:rename "geex.lib" "geex.base"]]
+             :mode :preview})
+
+#_(refactor {:paths ["/home/jonas/prog/clojure/pres-clojured"]
+             :ops [[:rename "exsampler.sample" "exampler.sample"]]
+             :mode :preview})
+
+#_(refactor {:paths ["/home/jonas/prog/clojure/geex"
+                   "/home/jonas/prog/clojure/geex-benchmarks/clojure-benchmarks"
+                   "/home/jonas/prog/clojure/geex-benchmarks/pres-clojured"]
+             :ops [[:rename "geex.base" "geex.common"]]
+             :mode :execute})
